@@ -1,0 +1,28 @@
+# WZRD — AI Model Velocity Signals
+
+> Real-time adoption tracking for open-source AI models across HuggingFace, GitHub, OpenRouter, and ArtificialAnalysis. Free, neutral, on-chain (Solana).
+
+## Signal Feed (free, no auth)
+
+GET https://api.twzrd.xyz/v1/signals/momentum
+GET https://api.twzrd.xyz/v1/signals/momentum/premium
+
+Filters: ?limit=N, ?platform=huggingface, ?capability=code, ?trending=true
+
+## Install
+
+pip install wzrd-client
+
+```python
+import wzrd
+model = wzrd.pick("code")
+```
+
+## Links
+
+- Feed: https://twzrd.xyz/feed
+- API: https://api.twzrd.xyz/v1/signals/momentum
+- Health: https://api.twzrd.xyz/health
+- OpenAPI: https://api.twzrd.xyz/openapi.json
+- PyPI: https://pypi.org/project/wzrd-client/
+- npm: https://www.npmjs.com/package/@wzrd_sol/sdk
