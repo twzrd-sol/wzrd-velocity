@@ -1,6 +1,6 @@
 {
   "name": "@wzrd_sol/sdk",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Earn CCM from any Node.js agent in 6 lines. Model velocity oracle + earn loop on Solana.",
   "type": "module",
   "main": "dist/index.js",

@@ -5,7 +5,7 @@
  * deposit_market, settle_market, and claim_global.
  */
 
-export const VERSION = '0.2.0';
+export const VERSION = '0.3.1';
 
 // ── Constants ──────────────────────────────────────────
 export {
