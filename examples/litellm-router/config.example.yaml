@@ -1,0 +1,45 @@
+wzrd:
+  momentum_url: https://api.twzrd.xyz/v1/signals/momentum
+  request_timeout_seconds: 5
+
+aliases:
+  # Map LiteLLM deployment names → WZRD model names (from /v1/signals/momentum).
+  # The plugin auto-matches by slug, but explicit aliases improve hit rate.
+  qwen-9b:
+    - "Qwen/Qwen3.5-9B"
+    - "unsloth/Qwen3.5-9B-Instruct"
+  qwen-35b:
+    - "Qwen/Qwen3.5-35B-A3B"
+    - "unsloth/Qwen3.5-35B-A3B-GGUF"
+  llama-70b:
+    - "meta-llama/Llama-3.3-70B-Instruct"
+    - "meta-llama/Meta-Llama-3.3-70B-Instruct"
+  nemotron-120b:
+    - "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-FP8"
+  kimi-k2:
+    - "moonshotai/Kimi-K2.5"
+  qwen-72b:
+    - "Qwen/Qwen2.5-72B-Instruct"
+  glm-ocr:
+    - "zai-org/GLM-OCR"
+  mimo-v2:
+    - "xiaomi/mimo-v2-omni"
+
+tasks:
+  chat:
+    allowed_aliases:
+      - qwen-9b
+      - qwen-35b
+      - llama-70b
+      - kimi-k2
+      - mimo-v2
+  code:
+    allowed_aliases:
+      - qwen-35b
+      - qwen-9b
+      - llama-70b
+  reasoning:
+    allowed_aliases:
+      - qwen-35b
+      - llama-70b
+      - nemotron-120b

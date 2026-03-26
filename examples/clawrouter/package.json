@@ -1,0 +1,29 @@
+{
+  "name": "@wzrd_sol/clawrouter-velocity",
+  "version": "0.1.1",
+  "description": "WZRD velocity scoring dimension for ClawRouter — model momentum as routing signal",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx test/velocity.test.ts",
+    "test:contract": "tsx test/router-contract.test.ts",
+    "test:parity": "node test/plugin-parity.test.mjs",
+    "compare:live": "node test/live-plugin-compare.mjs"
+  },
+  "keywords": ["clawrouter", "wzrd", "velocity", "routing", "llm", "model-selection"],
+  "license": "MIT",
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.5.0"
+  }
+}

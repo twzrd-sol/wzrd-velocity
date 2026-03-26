@@ -1,28 +1,67 @@
-# WZRD — AI Model Velocity Signals
+# WZRD — AI Model Velocity Oracle
 
-> Real-time adoption tracking for open-source AI models across HuggingFace, GitHub, OpenRouter, and ArtificialAnalysis. Free, neutral, on-chain (Solana).
+> Which models are gaining attention right now? WZRD measures real-time developer adoption across HuggingFace, GitHub, OpenRouter, and ArtificialAnalysis. 100+ models tracked. Free, neutral, on-chain.
 
-## Signal Feed (free, no auth)
+## Read the Oracle
 
 GET https://api.twzrd.xyz/v1/signals/momentum
-GET https://api.twzrd.xyz/v1/signals/momentum/premium
 
-Filters: ?limit=N, ?platform=huggingface, ?capability=code, ?trending=true
+Returns: model, trend, score, action, confidence, platform, capabilities.
 
-## Install
+Filters: ?limit=N, ?platform=huggingface, ?trending=true, ?capability=code
 
-pip install wzrd-client
+## Read (free, zero config)
 
 ```python
+pip install wzrd-client
+
 import wzrd
-model = wzrd.pick("code")
+model = wzrd.pick("code")              # → "Qwen/Qwen3.5-35B-A3B"
+top = wzrd.shortlist("reasoning", n=3) # ranked list
 ```
+
+No API key. No account. Works immediately.
+
+## Earn CCM (requires Solana keypair)
+
+Agents that report verified inference earn CCM tokens. The MCP read tools are the discovery surface. Earning runs in your agent's runtime:
+
+```python
+wzrd.run_loop(keypair_path="~/.solana/id.json")
+# authenticates → picks models → runs inference → reports → claims CCM
+```
+
+## On-Chain Feeds (Solana) — Verify Yourself
+
+9 Switchboard pull oracle feeds on mainnet (7 velocity + 2 price). Any Solana program can read model velocity.
+
+Sample feeds (quote accounts — query with `solana account <address>`):
+- Qwen 3.5 9B:          AepiFwnbfCvXwA5gtAysMaxoqdwsGiYCN6gFBLGqZf1S
+- Llama 3.3 70B:         6EgRwhE6db1Aqsxzmp9wj6QH2y5ZEji1xe1YdovwmD9g
+- Kimi K2.5:             5xmwRtTgcCz6R2KapxpEXVjCNcZCpe24DnCC295S769w
+- Qwen3-Coder-Next:      g3RRSmg4PJjDNCq3jkTutMB8431UMMtRTNBRpc7UfVV
+
+All 7 velocity + 2 price feeds listed in the keeper source: https://github.com/twzrd-sol/wzrd-final/blob/main/keepers/switchboard-velocity/src/keeper.ts
+
+## MCP Server (26 tools + 2 resources)
+
+POST https://app.twzrd.xyz/api/mcp
+GET https://app.twzrd.xyz/api/mcp (Accept: text/event-stream)
+
+Resources: `wzrd://leaderboard`, `wzrd://health`
+
+Streamable HTTP MCP — connect from Claude, Hermes Agent, or any MCP client.
+Agent earn flow: `agent_challenge` -> `agent_verify` -> `infer` -> `report_outcome` -> `get_rewards_balance`.
 
 ## Links
 
-- Feed: https://twzrd.xyz/feed
-- API: https://api.twzrd.xyz/v1/signals/momentum
+- Oracle Feed: https://api.twzrd.xyz/v1/signals/momentum
+- OpenAPI (public subset): https://twzrd.xyz/openapi.json
+- OpenAPI (full API): https://api.twzrd.xyz/openapi.json
+- MCP Guide: https://twzrd.xyz/mcp-guide.md
+- MCP Manifest: https://twzrd.xyz/.well-known/mcp-server.json
+- MCP Endpoint: https://app.twzrd.xyz/api/mcp
+- Agent Manifest: https://twzrd.xyz/.well-known/agent.json
 - Health: https://api.twzrd.xyz/health
-- OpenAPI: https://api.twzrd.xyz/openapi.json
 - PyPI: https://pypi.org/project/wzrd-client/
 - npm: https://www.npmjs.com/package/@wzrd_sol/sdk

@@ -1,0 +1,57 @@
+{
+  "name": "@wzrd_sol/sdk",
+  "version": "0.3.0",
+  "description": "Earn CCM from any Node.js agent in 6 lines. Model velocity oracle + earn loop on Solana.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "tsc",
+    "dev": "tsc --watch",
+    "example:deposit": "tsx examples/deposit.ts",
+    "example:claim": "tsx examples/claim.ts",
+    "typecheck:examples": "tsc -p tsconfig.examples.json"
+  },
+  "keywords": [
+    "solana",
+    "attention",
+    "defi",
+    "sdk",
+    "wzrd",
+    "vlofi",
+    "ccm",
+    "anchor"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twzrd-sol/wzrd-velocity"
+  },
+  "homepage": "https://twzrd.xyz",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@solana/web3.js": "^1.90.0",
+    "tweetnacl": "^1.0.0"
+  },
+  "dependencies": {
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": {
+    "@solana/web3.js": "^1.95.0",
+    "typescript": "^5.5.0"
+  }
+}

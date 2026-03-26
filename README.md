@@ -1,29 +1,8 @@
-# wzrd-velocity
+# WZRD — AI Model Velocity Oracle
 
-**Which AI model should I use?** WZRD tells you — in real time.
-
-```python
-pip install wzrd-client
-```
-
-```python
-import wzrd
-
-model = wzrd.pick("code")  # returns the fastest-growing model right now
-```
-
-WZRD tracks adoption velocity of 100+ open-source AI models across HuggingFace downloads, GitHub stars, OpenRouter routing volume, and ArtificialAnalysis benchmarks. Updated every 5 minutes.
-
-## What it does
-
-- **Trend classification**: surging, accelerating, stable, decelerating, cooling
-- **Capability filtering**: `pick("code")`, `pick("vision")`, `pick("reasoning")`
-- **Shortlist ranking**: top N models for any task, scored by momentum
-- **On-chain oracle**: 17 Switchboard feeds on Solana mainnet — any program can read velocity
+Real-time adoption tracking for 100+ open-source AI models across HuggingFace, GitHub, OpenRouter, and ArtificialAnalysis. Free to read. Agents earn CCM on Solana.
 
 ## Install
-
-### Python (recommended)
 
 ```bash
 pip install wzrd-client
@@ -32,129 +11,143 @@ pip install wzrd-client
 ```python
 import wzrd
 
-# Pick the best model for a task
-model = wzrd.pick("code")
-
-# Get full details
-choice = wzrd.pick_details("code")
-print(choice.model, choice.trend, choice.score, choice.capabilities)
-
-# Rank your candidates
-ranked = wzrd.shortlist("chat", 5)
-
-# Compare two models
-wzrd.compare("meta-llama/Llama-3.3-70B-Instruct", "Qwen/Qwen3.5-9B")
+model = wzrd.pick("code")      # Best model for coding right now
+details = wzrd.pick_details("reasoning")  # With score, trend, confidence
 ```
 
-### TypeScript
+No API key. No auth. Returns in <100ms (cached).
+
+## Earn CCM
+
+Agents that contribute model selection data earn CCM tokens. The loop is: **authenticate, pick, infer, report, claim.**
+
+```python
+import wzrd
+
+wzrd.run_loop(
+    keypair="~/.config/solana/id.json",
+    tasks=["code", "chat", "reasoning"],
+    cycle_seconds=60,
+)
+```
+
+Claims are gasless — no SOL required. Server-witnessed inference ensures real usage.
+
+**[Full getting-started guide](https://twzrd.xyz/start)**
+
+## MCP
+
+26 tools. Zero config. Connect from Claude Desktop, Cursor, or any MCP client.
+
+```json
+{
+  "mcpServers": {
+    "wzrd": {
+      "transport": "streamable-http",
+      "url": "https://app.twzrd.xyz/api/mcp"
+    }
+  }
+}
+```
+
+Hero tool: `pick_model` — one call, best model for your task.
+
+## TypeScript SDK
+
+Full instruction builders for the on-chain protocol: deposit, settle, claim, LP.
 
 ```bash
 npm install @wzrd_sol/sdk
 ```
 
-### LiteLLM (routing plugin)
+```typescript
+import { createDepositMarketIx } from '@wzrd_sol/sdk';
 
-```bash
-pip install litellm-wzrd-momentum
+const ixs = await createDepositMarketIx(connection, wallet, marketId, 1_000_000n);
 ```
 
-```python
-from litellm import Router
-from wzrd_momentum_strategy import register
+### Framework Plugins
 
-router = Router(model_list=[...])
-register(router)  # every call now routes via momentum
-```
+| Framework | Package | Install |
+|-----------|---------|---------|
+| ElizaOS | `@wzrd_sol/eliza-plugin` | `npm i @wzrd_sol/eliza-plugin` |
+| Solana Agent Kit | `@wzrd_sol/solana-agent-plugin` | `npm i @wzrd_sol/solana-agent-plugin` |
+| GOAT | `@wzrd_sol/goat-plugin` | `npm i @wzrd_sol/goat-plugin` |
 
-### ClawRouter (scoring dimension)
+## Python API
 
-```bash
-npm install @wzrd_sol/clawrouter-velocity
-```
+| Function | What it does |
+|----------|-------------|
+| `wzrd.pick(task)` | Best model name for a task |
+| `wzrd.pick_details(task)` | Structured result with score, trend, confidence |
+| `wzrd.shortlist(task, limit=5)` | Top N ranked models |
+| `wzrd.compare(a, b)` | Head-to-head comparison |
+| `wzrd.pick_onchain(task)` | Trustless — reads Switchboard feeds directly |
+| `wzrd.run_loop(keypair=...)` | Full earn loop: auth, pick, report, claim |
+| `WZRDRouter(client)` | Drop-in wrapper for OpenAI/Anthropic clients |
 
-## Earn CCM while routing
+## Public API
 
-Agents that report their model picks earn CCM tokens on Solana. No SOL required for claims (gasless relay).
-
-```python
-import wzrd
-
-wzrd.run_loop()  # picks, reports, earns CCM, claims — runs forever
-```
-
-Or with manual control:
-
-```python
-agent = wzrd.WZRDAgent.from_env()
-agent.authenticate()
-agent.report_pick(choice, quality_score=0.9)
-agent.earned()
-agent.claim()
-```
-
-## Signal API (free, no auth)
-
-```bash
-# All models
-curl https://api.twzrd.xyz/v1/signals/momentum
-
-# Filter by capability
-curl https://api.twzrd.xyz/v1/signals/momentum?capability=code
-
-# Premium fields (velocity_ema, accel, quality_index)
-curl https://api.twzrd.xyz/v1/signals/momentum/premium
-```
-
-Returns:
-
-```json
-{
-  "count": 100,
-  "models": [
-    {
-      "model": "meta-llama/Llama-3.3-70B-Instruct",
-      "trend": "surging",
-      "score": 0.153,
-      "action": "pre_warm_urgent",
-      "confidence": "normal",
-      "platform": "huggingface",
-      "capabilities": ["code", "reasoning"]
-    }
-  ]
-}
-```
-
-## Switchboard Oracle (on-chain)
-
-17 feeds on Solana mainnet. Any program can read model velocity permissionlessly:
-
-```rust
-let feed = PullFeedAccountData::parse(account_data)?;
-let velocity = feed.get_value(&Clock::get()?, 100, 1, false)?;
-```
-
-2 price feeds: CCM/USD, vLOFI/USD.
-
-## MCP Server
-
-20 tools via streamable HTTP:
+Base URL: `https://api.twzrd.xyz`
 
 ```
-POST https://app.twzrd.xyz/api/mcp
+GET  /v1/signals/momentum   — model velocity signals
+GET  /v1/leaderboard        — ranked attention markets
+GET  /v1/markets/:id        — single market detail
+GET  /v1/feeds              — Switchboard oracle feeds
+GET  /health                — service health
 ```
 
-Manifest: [.well-known/mcp-server.json](https://twzrd.xyz/.well-known/mcp-server.json)
+Full spec: [openapi.json](https://api.twzrd.xyz/openapi.json)
 
 ## Links
 
-- **Feed**: [twzrd.xyz/feed](https://twzrd.xyz/feed)
-- **API**: [api.twzrd.xyz/v1/signals/momentum](https://api.twzrd.xyz/v1/signals/momentum)
-- **OpenAPI**: [twzrd.xyz/openapi.json](https://twzrd.xyz/openapi.json)
-- **llms.txt**: [api.twzrd.xyz/llms.txt](https://api.twzrd.xyz/llms.txt)
-- **PyPI**: [pypi.org/project/wzrd-client](https://pypi.org/project/wzrd-client/)
-- **npm**: [npmjs.com/package/@wzrd_sol/sdk](https://www.npmjs.com/package/@wzrd_sol/sdk)
-- **MCP Guide**: [twzrd.xyz/mcp-guide.md](https://twzrd.xyz/mcp-guide.md)
+| | |
+|---|---|
+| Get Started | [twzrd.xyz/start](https://twzrd.xyz/start) |
+| Live Feed | [twzrd.xyz/feed](https://twzrd.xyz/feed) |
+| MCP Guide | [twzrd.xyz/mcp-guide.md](https://twzrd.xyz/mcp-guide.md) |
+| Machine Manifest | [twzrd.xyz/llms.txt](https://twzrd.xyz/llms.txt) |
+| API | [api.twzrd.xyz/v1/leaderboard](https://api.twzrd.xyz/v1/leaderboard) |
+| PyPI | [wzrd-client](https://pypi.org/project/wzrd-client/) |
+| npm | [@wzrd_sol/sdk](https://www.npmjs.com/package/@wzrd_sol/sdk) |
+
+## Key Identifiers
+
+| Item | Address |
+|------|---------|
+| Program | `GnGzNdsQMxMpJfMeqnkGPsvHm8kwaDidiKjNU2dCVZop` |
+| CCM Mint | `Dxk8mAb3C7AM8JN6tAJfVuSja5yidhZM5sEKW3SRX2BM` (Token-2022, 50 BPS transfer fee) |
+| vLOFI Mint | `E9Kt33axpCy3ve2PCY9BSrbPhcR9wdDsWQECAahzw2dS` |
+
+## Architecture
+
+```
+wzrd-final/
+├── programs/attention-oracle/    # On-chain program (Solana)
+├── server/                       # Backend API + background jobs (Axum/Rust)
+├── app/                          # Frontend (React/Vite)
+├── sdk/                          # TypeScript SDK — 35 instruction builders
+├── integrations/wzrd-client/     # Python client (PyPI: wzrd-client)
+├── agents/                       # 13 agent implementations across 6 frameworks
+├── crates/                       # Rust crates (stream ingestor, merkle, types)
+├── ops/                          # Deployment scripts
+└── migrations/                   # SQL migrations
+```
+
+## Build
+
+```bash
+# Server
+cargo build -p wzrd-server
+
+# Frontend
+cd app && npm install && npm run dev
+
+# On-chain program
+anchor build
+```
 
 ## License
 
-MIT
+All rights reserved. Source available for transparency and agent integration.
