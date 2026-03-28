@@ -1,0 +1,40 @@
+{
+  "skills": [
+    {
+      "id": "wzrd-velocity",
+      "name": "wzrd-velocity",
+      "description": "Real-time AI model routing via pick_model. Momentum signals for 100+ models.",
+      "url": "https://app.twzrd.xyz/.well-known/skills/wzrd-velocity/SKILL.md",
+      "metadata": {
+        "author": "twzrd-sol",
+        "version": "2.2.1",
+        "category": "ai",
+        "tags": ["ai", "model-routing", "momentum", "signal-feed", "oracle"]
+      }
+    },
+    {
+      "id": "wzrd-auto",
+      "name": "wzrd-auto",
+      "description": "Velocity-informed model recommendation. Pick the best model for any task using real-time adoption data from 100+ models.",
+      "url": "https://app.twzrd.xyz/.well-known/skills/wzrd-auto/SKILL.md",
+      "metadata": {
+        "author": "twzrd-sol",
+        "version": "1.0.0",
+        "category": "ai",
+        "tags": ["ai", "model-routing", "auto-pick", "velocity", "wzrd"]
+      }
+    },
+    {
+      "id": "wzrd-race",
+      "name": "wzrd-race",
+      "description": "Race 3 models on the same prompt and pick the winner. Signal-guided contender selection, output quality scoring.",
+      "url": "https://app.twzrd.xyz/.well-known/skills/wzrd-race/SKILL.md",
+      "metadata": {
+        "author": "twzrd-sol",
+        "version": "1.0.0",
+        "category": "ai",
+        "tags": ["ai", "model-racing", "comparison", "delegation", "wzrd"]
+      }
+    }
+  ]
+}
