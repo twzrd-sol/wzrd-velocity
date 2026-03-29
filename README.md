@@ -1,8 +1,15 @@
-# WZRD — AI Model Velocity Oracle
+# WZRD — AI Model Velocity Oracle for Agents
 
-Real-time adoption tracking for 100+ open-source AI models across HuggingFace, GitHub, OpenRouter, and ArtificialAnalysis. Free to read. Agents earn CCM on Solana.
+**Which AI model should your agent use right now?**
+Real-time adoption signals across 100+ LLMs. HuggingFace, GitHub, OpenRouter, ArtificialAnalysis — updated every 5 minutes. Dynamic model routing for autonomous agents. Agents earn CCM tokens on Solana.
 
-## Install
+[![PyPI version](https://img.shields.io/pypi/v/wzrd-client.svg)](https://pypi.org/project/wzrd-client/)
+[![npm version](https://img.shields.io/npm/v/@wzrd_sol/sdk.svg)](https://www.npmjs.com/package/@wzrd_sol/sdk)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+---
+
+## Quickstart (Python)
 
 ```bash
 pip install wzrd-client
@@ -11,143 +18,167 @@ pip install wzrd-client
 ```python
 import wzrd
 
-model = wzrd.pick("code")      # Best model for coding right now
-details = wzrd.pick_details("reasoning")  # With score, trend, confidence
+model = wzrd.pick("code")           # → "Qwen/Qwen3.5-35B-A3B"
+details = wzrd.pick_details("code") # score, trend, confidence
+top_5 = wzrd.shortlist("code", 5)   # ranked list
 ```
 
-No API key. No auth. Returns in <100ms (cached).
+No API key. No account. Works immediately.
 
-## Earn CCM
+**Task types**: `code`, `chat`, `reasoning`, `math`, `multilingual` — or any string.
 
-Agents that contribute model selection data earn CCM tokens. The loop is: **authenticate, pick, infer, report, claim.**
-
-```python
-import wzrd
-
-wzrd.run_loop(
-    keypair="~/.config/solana/id.json",
-    tasks=["code", "chat", "reasoning"],
-    cycle_seconds=60,
-)
-```
-
-Claims are gasless — no SOL required. Server-witnessed inference ensures real usage.
-
-**[Full getting-started guide](https://twzrd.xyz/start)**
-
-## MCP
-
-26 tools. Zero config. Connect from Claude Desktop, Cursor, or any MCP client.
-
-```json
-{
-  "mcpServers": {
-    "wzrd": {
-      "transport": "streamable-http",
-      "url": "https://app.twzrd.xyz/api/mcp"
-    }
-  }
-}
-```
-
-Hero tool: `pick_model` — one call, best model for your task.
-
-## TypeScript SDK
-
-Full instruction builders for the on-chain protocol: deposit, settle, claim, LP.
+## Quickstart (TypeScript)
 
 ```bash
 npm install @wzrd_sol/sdk
 ```
 
 ```typescript
-import { createDepositMarketIx } from '@wzrd_sol/sdk';
+import { bestModel } from '@wzrd_sol/sdk';
 
-const ixs = await createDepositMarketIx(connection, wallet, marketId, 1_000_000n);
+const picks = await bestModel({ task: 'code', budget: 'micro' });
+console.log(picks[0].model_id);
 ```
 
-### Framework Plugins
+**Framework plugins** on npm:
+- [`@wzrd_sol/eliza-plugin`](https://www.npmjs.com/package/@wzrd_sol/eliza-plugin) — ElizaOS
+- [`@wzrd_sol/solana-agent-plugin`](https://www.npmjs.com/package/@wzrd_sol/solana-agent-plugin) — Solana Agent Kit
+- [`@wzrd_sol/goat-plugin`](https://www.npmjs.com/package/@wzrd_sol/goat-plugin) — GOAT SDK
 
-| Framework | Package | Install |
-|-----------|---------|---------|
-| ElizaOS | `@wzrd_sol/eliza-plugin` | `npm i @wzrd_sol/eliza-plugin` |
-| Solana Agent Kit | `@wzrd_sol/solana-agent-plugin` | `npm i @wzrd_sol/solana-agent-plugin` |
-| GOAT | `@wzrd_sol/goat-plugin` | `npm i @wzrd_sol/goat-plugin` |
+---
 
-## Python API
+## Why WZRD
 
-| Function | What it does |
+- **Save money** — models change weekly. The one you hardcoded is probably 10x more expensive than the trending alternative.
+- **Better results** — momentum is a leading indicator. Models gaining adoption fast are usually improving fast.
+- **Trustless on-chain oracles** — 9 Switchboard feeds on Solana mainnet. Verify any signal independently.
+- **Get paid** — agents that report inference results earn CCM tokens through a gasless relay.
+
+## Use Cases
+
+- **Autonomous agents** that always pick the fastest/cheapest/best model
+- **Multi-agent orchestration** (CrewAI, LangGraph, AutoGen, Eliza)
+- **MCP clients** (Claude Code, Cursor) — 26 tools via MCP server
+- **On-chain protocols** that need verifiable model selection data
+
+---
+
+## Earn CCM Tokens (optional)
+
+Agents that report which model they picked — and what happened — earn CCM on Solana. The usage data improves the oracle, so WZRD pays for it.
+
+```python
+wzrd.run_loop()
+# authenticates → picks models → runs inference → reports → claims CCM
+```
+
+Or with auto-staking:
+
+```python
+wzrd.run_loop(stake=True)
+# authenticates → reports → claims → auto-stakes (7-day lock, 1.25x boost)
+```
+
+**What you need**: Nothing. The client auto-generates a Solana keypair at `~/.config/solana/wzrd-agent.json` on first run. Claims are gasless — no SOL needed.
+
+CLI equivalent:
+
+```bash
+wzrd run --stake                 # earn loop with auto-stake
+wzrd stake all --lock=30         # stake full balance, 30-day lock (~7% APR)
+wzrd rewards --claim             # claim staking rewards
+```
+
+---
+
+## Full Python API
+
+| Function | Description |
 |----------|-------------|
-| `wzrd.pick(task)` | Best model name for a task |
-| `wzrd.pick_details(task)` | Structured result with score, trend, confidence |
-| `wzrd.shortlist(task, limit=5)` | Top N ranked models |
-| `wzrd.compare(a, b)` | Head-to-head comparison |
-| `wzrd.pick_onchain(task)` | Trustless — reads Switchboard feeds directly |
-| `wzrd.run_loop(keypair=...)` | Full earn loop: auth, pick, report, claim |
-| `WZRDRouter(client)` | Drop-in wrapper for OpenAI/Anthropic clients |
+| `wzrd.pick(task)` | Best model name for the task |
+| `wzrd.pick_details(task)` | Structured result: score, trend, confidence |
+| `wzrd.shortlist(task, limit)` | Top-N ranked models |
+| `wzrd.compare(model_a, model_b)` | Head-to-head signal comparison |
+| `wzrd.pick_onchain(task)` | Reads Switchboard feeds directly (trustless) |
+| `wzrd.run_loop(...)` | Complete earn loop: pick → infer → report → claim |
 
-## Public API
+## Candidate-Aware Routing
 
-Base URL: `https://api.twzrd.xyz`
+Constrain picks to models you actually have access to:
+
+```python
+model = wzrd.pick(
+    "code",
+    candidates=[
+        "openrouter/qwen/qwen3.5-9b",
+        "openrouter/qwen/qwen3.5-35b-a3b",
+        "anthropic/claude-sonnet-4.6",
+    ],
+)
+```
+
+## Agent Auth
+
+```python
+agent = wzrd.WZRDAgent.from_env()
+session = agent.authenticate()
+receipt = agent.report_pick(choice, quality_score=0.9, latency_ms=1200)
+status = agent.earned()
+```
+
+Keypair loading: `~/.config/solana/id.json`, `WZRD_AGENT_KEYPAIR_PATH`, `WZRD_AGENT_KEYPAIR` (base58 or JSON byte array).
+
+---
+
+## Public REST API
 
 ```
-GET  /v1/signals/momentum   — model velocity signals
-GET  /v1/leaderboard        — ranked attention markets
-GET  /v1/markets/:id        — single market detail
-GET  /v1/feeds              — Switchboard oracle feeds
-GET  /health                — service health
+GET https://api.twzrd.xyz/v1/signals/momentum
 ```
 
-Full spec: [openapi.json](https://api.twzrd.xyz/openapi.json)
+Full OpenAPI spec: [api.twzrd.xyz/openapi.json](https://api.twzrd.xyz/openapi.json)
 
-## Links
+## On-Chain Oracles
 
-| | |
-|---|---|
-| Get Started | [twzrd.xyz/start](https://twzrd.xyz/start) |
-| Live Feed | [twzrd.xyz/feed](https://twzrd.xyz/feed) |
-| MCP Guide | [twzrd.xyz/mcp-guide.md](https://twzrd.xyz/mcp-guide.md) |
-| Machine Manifest | [twzrd.xyz/llms.txt](https://twzrd.xyz/llms.txt) |
-| API | [api.twzrd.xyz/v1/leaderboard](https://api.twzrd.xyz/v1/leaderboard) |
-| PyPI | [wzrd-client](https://pypi.org/project/wzrd-client/) |
-| npm | [@wzrd_sol/sdk](https://www.npmjs.com/package/@wzrd_sol/sdk) |
+9 Switchboard pull feeds on Solana mainnet (7 velocity + 2 price):
 
-## Key Identifiers
+| Feed | Address |
+|------|---------|
+| Qwen 3.5 9B | `AepiFwnbfCvXwA5gtAysMaxoqdwsGiYCN6gFBLGqZf1S` |
+| Llama 3.3 70B | `6EgRwhE6db1Aqsxzmp9wj6QH2y5ZEji1xe1YdovwmD9g` |
+| Kimi K2.5 | `5xmwRtTgcCz6R2KapxpEXVjCNcZCpe24DnCC295S769w` |
+| Qwen3-Coder-Next | `g3RRSmg4PJjDNCq3jkTutMB8431UMMtRTNBRpc7UfVV` |
+
+Full registry: `wzrd.oracle.list_feeds()`
+
+## On-Chain Identifiers
 
 | Item | Address |
 |------|---------|
-| Program | `GnGzNdsQMxMpJfMeqnkGPsvHm8kwaDidiKjNU2dCVZop` |
-| CCM Mint | `Dxk8mAb3C7AM8JN6tAJfVuSja5yidhZM5sEKW3SRX2BM` (Token-2022, 50 BPS transfer fee) |
+| AO Program | `GnGzNdsQMxMpJfMeqnkGPsvHm8kwaDidiKjNU2dCVZop` |
+| CCM Mint | `Dxk8mAb3C7AM8JN6tAJfVuSja5yidhZM5sEKW3SRX2BM` |
 | vLOFI Mint | `E9Kt33axpCy3ve2PCY9BSrbPhcR9wdDsWQECAahzw2dS` |
 
-## Architecture
+---
 
-```
-wzrd-final/
-├── programs/attention-oracle/    # On-chain program (Solana)
-├── server/                       # Backend API + background jobs (Axum/Rust)
-├── app/                          # Frontend (React/Vite)
-├── sdk/                          # TypeScript SDK — 35 instruction builders
-├── integrations/wzrd-client/     # Python client (PyPI: wzrd-client)
-├── agents/                       # 13 agent implementations across 6 frameworks
-├── crates/                       # Rust crates (stream ingestor, merkle, types)
-├── ops/                          # Deployment scripts
-└── migrations/                   # SQL migrations
-```
+## Links
 
-## Build
+- [twzrd.xyz/start](https://twzrd.xyz/start) — onboarding
+- [twzrd.xyz/feed](https://twzrd.xyz/feed) — live velocity feed
+- [MCP guide](https://twzrd.xyz/mcp-guide.md) — connect to Claude Code / Cursor
+- [PyPI](https://pypi.org/project/wzrd-client/) — Python package
+- [npm](https://www.npmjs.com/package/@wzrd_sol/sdk) — TypeScript SDK
 
-```bash
-# Server
-cargo build -p wzrd-server
+## Environment Variables
 
-# Frontend
-cd app && npm install && npm run dev
-
-# On-chain program
-anchor build
-```
+| Variable | Purpose |
+|----------|---------|
+| `WZRD_API_URL` | Signal endpoint override |
+| `WZRD_AGENT_KEYPAIR_PATH` | Path to Solana JSON keypair |
+| `WZRD_AGENT_KEYPAIR` | Base58 secret or JSON byte array |
+| `WZRD_TIMEOUT_SECONDS` | Request timeout |
+| `WZRD_CACHE_TTL_SECONDS` | Cache TTL for fetched signals |
 
 ## License
 
-All rights reserved. Source available for transparency and agent integration.
+MIT
