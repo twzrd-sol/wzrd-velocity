@@ -152,15 +152,24 @@ async function fetchFromUrl(url: string): Promise<VelocitySignal[]> {
 }
 
 async function fetchSignals(apiUrl: string): Promise<VelocitySignal[]> {
-  // Try premium first (has velocity_ema, accel, quality_index)
-  // Fall back to base endpoint if premium returns 402/403
+  // The premium endpoint carries richer fields (velocity_ema, accel,
+  // quality_index) but covers fewer models than the base feed. Fetch both and
+  // merge so coverage matches the full tracked set while keeping premium's
+  // extra fields where available. Premium wins on conflict.
   const premiumUrl = apiUrl.endsWith("/premium") ? apiUrl : `${apiUrl}/premium`;
-  const signals = await fetchFromUrl(premiumUrl);
-  if (signals.length > 0) return signals;
-
-  // Fallback to base endpoint (always works, fewer fields)
   const baseUrl = apiUrl.replace(/\/premium$/, "");
-  return fetchFromUrl(baseUrl);
+
+  const [premium, base] = await Promise.all([
+    fetchFromUrl(premiumUrl),
+    fetchFromUrl(baseUrl),
+  ]);
+
+  if (premium.length === 0 && base.length === 0) return [];
+
+  const byModel = new Map<string, VelocitySignal>();
+  for (const s of base) byModel.set(s.model, s);
+  for (const s of premium) byModel.set(s.model, s); // premium overrides base
+  return [...byModel.values()];
 }
 
 async function refresh(apiUrl: string): Promise<void> {

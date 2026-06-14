@@ -4,6 +4,8 @@
  * Run: node test/live-plugin-compare.mjs
  */
 
+import assert from "node:assert/strict";
+
 import { rankByVelocity, refreshCache, scoreModelVelocity } from "../dist/index.js";
 import {
   CANDIDATES,
@@ -74,9 +76,22 @@ async function run() {
   console.log(`ClawRouter winner: ${clawOrder[0]}`);
   console.log(`LiteLLM winner:   ${plugin.selected_model_name}`);
   console.log(`Tracked models:   ClawRouter=${clawTracked} LiteLLM=${pluginTracked}`);
-  if (!preflight.ok || (clawTracked === 0 && pluginTracked === 0)) {
-    console.log("Note: this run fell back to no-signal routing; the real feed was unavailable or unmatched.");
+
+  if (!preflight.ok) {
+    console.log("\nSKIP: live winner parity (feed unavailable).");
+    return;
   }
+  if (clawTracked === 0 && pluginTracked === 0) {
+    console.log("\nSKIP: live winner parity (no tracked candidates in feed).");
+    return;
+  }
+
+  assert.equal(
+    clawOrder[0],
+    plugin.selected_model_name,
+    "expected ClawRouter and LiteLLM to pick the same winner on the live feed"
+  );
+  console.log("\nPASS: live winner parity");
 }
 
 run().catch((error) => {

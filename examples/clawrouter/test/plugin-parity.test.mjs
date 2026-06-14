@@ -80,7 +80,7 @@ async function run() {
     const clawRanked = rankByVelocity(CANDIDATES.map((candidate) => candidate.wzrdModel));
     const clawOrder = clawAliasOrder(clawRanked.map((entry) => entry.modelId));
     const qwen = scoreModelVelocity("Qwen/Qwen3.5-9B");
-    const gemma = scoreModelVelocity("google/gemma-3-27b-it");
+    const gemma = scoreModelVelocity("google/gemma-4-E4B-it");
     const kimi = scoreModelVelocity("moonshotai/Kimi-K2.5");
 
     assert.equal(clawOrder[0], "qwen-9b");

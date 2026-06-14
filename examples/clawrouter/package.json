@@ -1,28 +1,43 @@
 {
   "name": "@wzrd_sol/clawrouter-velocity",
-  "version": "0.1.1",
+  "version": "0.1.5",
   "description": "WZRD velocity scoring dimension for ClawRouter — model momentum as routing signal",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "README.md"],
+  "author": "WZRD <dev@twzrd.xyz> (https://twzrd.xyz)",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run build:cjs",
+    "build:cjs": "esbuild dist/index.js --bundle --format=cjs --platform=node --target=node18 --outfile=dist/index.cjs",
+    "prepublishOnly": "npm run build",
     "test": "tsx test/velocity.test.ts",
     "test:contract": "tsx test/router-contract.test.ts",
+    "test:cjs": "npm run build && node test/cjs-require.test.cjs",
     "test:parity": "node test/plugin-parity.test.mjs",
-    "compare:live": "node test/live-plugin-compare.mjs"
+    "compare:live": "node test/live-plugin-compare.mjs",
+    "test:all": "npm run build && npm run test && npm run test:contract && npm run test:cjs && npm run test:parity && npm run compare:live"
   },
   "keywords": ["clawrouter", "wzrd", "velocity", "routing", "llm", "model-selection"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twzrd-sol/wzrd-velocity.git",
+    "directory": "examples/clawrouter"
+  },
+  "homepage": "https://github.com/twzrd-sol/wzrd-velocity/tree/main/examples/clawrouter",
   "devDependencies": {
+    "esbuild": "^0.28.1",
     "tsx": "^4.0.0",
     "typescript": "^5.5.0"
   }

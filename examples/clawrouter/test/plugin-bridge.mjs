@@ -22,9 +22,9 @@ export const CANDIDATES = [
     wzrdModel: "meta-llama/Llama-3.3-70B-Instruct",
   },
   {
-    alias: "gemma-27b",
-    litellmModel: "openrouter/google/gemma-3-27b-it",
-    wzrdModel: "google/gemma-3-27b-it",
+    alias: "gemma-e4b",
+    litellmModel: "openrouter/google/gemma-4-e4b-it",
+    wzrdModel: "google/gemma-4-E4B-it",
   },
   {
     alias: "kimi-k2",

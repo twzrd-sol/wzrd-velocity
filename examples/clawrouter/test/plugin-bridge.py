@@ -10,7 +10,10 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_DIR = Path(__file__).resolve().parents[2] / "litellm-wzrd-plugin"
+REPO_ROOT = Path(__file__).resolve().parents[4]
+PLUGIN_DIR = REPO_ROOT / "integrations" / "litellm-wzrd-plugin"
+if not (PLUGIN_DIR / "wzrd_momentum_strategy.py").is_file():
+    raise SystemExit(f"litellm-wzrd-plugin not found at {PLUGIN_DIR}")
 sys.path.insert(0, str(PLUGIN_DIR))
 
 import wzrd_momentum_strategy as wms
