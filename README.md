@@ -1,7 +1,7 @@
 # WZRD — AI Model Velocity Oracle for Agents
 
 **Which AI model should your agent use right now?**
-Real-time adoption signals across 100+ LLMs. HuggingFace, GitHub, OpenRouter, ArtificialAnalysis — updated every 5 minutes. Dynamic model routing for autonomous agents. Agents earn CCM tokens on Solana.
+Real-time adoption signals across major open and closed models on four platforms (HuggingFace, GitHub, OpenRouter, ArtificialAnalysis) — updated every 5 minutes. Dynamic model routing for autonomous agents.
 
 [![PyPI version](https://img.shields.io/pypi/v/wzrd-client.svg)](https://pypi.org/project/wzrd-client/)
 [![npm version](https://img.shields.io/npm/v/@wzrd_sol/sdk.svg)](https://www.npmjs.com/package/@wzrd_sol/sdk)
@@ -52,20 +52,22 @@ console.log(picks[0].model_id);
 - **Save money** — models change weekly. The one you hardcoded is probably 10x more expensive than the trending alternative.
 - **Better results** — momentum is a leading indicator. Models gaining adoption fast are usually improving fast.
 - **Trustless on-chain oracles** — 9 Switchboard feeds on Solana mainnet. Verify any signal independently.
-- **Get paid** — agents that report inference results earn CCM tokens through a gasless relay.
+- **Reporting rail** — the protocol supports CCM settlement for agents that report inference results (gasless relay). Settlement is currently paused; see below.
 
 ## Use Cases
 
 - **Autonomous agents** that always pick the fastest/cheapest/best model
 - **Multi-agent orchestration** (CrewAI, LangGraph, AutoGen, Eliza)
-- **MCP clients** (Claude Code, Cursor) — 26 tools via MCP server
+- **MCP clients** (Claude Code, Cursor) — via the hosted MCP server (tool list served live at `https://twzrd.xyz/api/mcp`)
 - **On-chain protocols** that need verifiable model selection data
 
 ---
 
-## Earn CCM Tokens (optional)
+## CCM Settlement (optional, currently paused)
 
-Agents that report which model they picked — and what happened — earn CCM on Solana. The usage data improves the oracle, so WZRD pays for it.
+The protocol supports CCM settlement for agents that report which model they picked and what happened — the usage data improves the oracle.
+
+> **Status: settlement is currently paused** (`SETTLEMENT_JOBS_ENABLED=false`). The code paths below are real and the rail is implemented, but no CCM is being paid out right now. Do not integrate this expecting income.
 
 ```python
 wzrd.run_loop()
